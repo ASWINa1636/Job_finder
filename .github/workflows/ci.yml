@@ -34,6 +34,8 @@ jobs:
           pip install pytest
 
       - name: Run Test Suite
+        env:
+          PYTHONPATH: .
         run: |
           python -m pytest tests/ -v --tb=short
 
@@ -58,5 +60,7 @@ jobs:
           pip install pytest
 
       - name: Run Diagnostic Probe in Quick Mode
+        env:
+          PYTHONPATH: .
         run: |
           python -m src.source_health --markdown
