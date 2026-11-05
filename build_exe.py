@@ -51,6 +51,14 @@ def build():
     if (ROOT / "data" / "jobs.sqlite3").exists():
         add_data_args.append(f"--add-data={ROOT / 'data' / 'jobs.sqlite3'}{os.pathsep}data")
 
+    # Verify PyInstaller is installed in the current Python environment
+    try:
+        import PyInstaller
+        print(f"[OK] PyInstaller detected: version {PyInstaller.__version__}")
+    except ImportError:
+        print("[WARN] PyInstaller not imported in current runtime. Installing directly...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "pyinstaller==6.11.0", "pyinstaller-hooks-contrib"])
+
     pyinstaller_cmd = [
         sys.executable, "-m", "PyInstaller",
         "--name=LocalJobFinder",
@@ -69,8 +77,10 @@ def build():
         str(ROOT / "app.py")
     ]
 
-    print(f"Running PyInstaller command in {ROOT}...")
-    subprocess.check_call(pyinstaller_cmd, cwd=str(ROOT))
+    print(f"Running PyInstaller command with {sys.executable} in {ROOT}...")
+    proc = subprocess.run(pyinstaller_cmd, cwd=str(ROOT))
+    if proc.returncode != 0:
+        raise RuntimeError(f"PyInstaller failed with exit code {proc.returncode}")
 
     # Verify that LocalJobFinder.exe exists
     exe_path = app_dist / "LocalJobFinder.exe"
