@@ -1,4 +1,4 @@
-# 🧭 Job Finder — Desktop Edition
+# Local AI Job Finder — Desktop Edition
 
 [![Download Windows Portable](https://img.shields.io/badge/Download-Windows%20Portable%20(.exe)-0078d4?style=for-the-badge&logo=windows)](https://github.com/ASWINa1636/Job_finder/releases/latest)
 
@@ -15,11 +15,11 @@ Pre-loaded with **3,880+ verified tech jobs** across **400+ top employers** (inc
 
 ---
 
-## 📸 Screenshots & Visual Walkthrough
+## Screenshots & Visual Walkthrough
 
 Explore the primary capabilities of the application through the dedicated tabs:
 
-### 1. 🔍 Find Jobs — Intelligent Discovery & Filter Grid
+### 1. Find Jobs — Intelligent Discovery & Filter Grid
 > Comprehensive job exploration interface featuring real-time metric counters, ⚠️ Missed Jobs alert badges, TF-IDF resume match scores, direct ATS requisition links, and a unified 4-column filter grid.
 ![Find Jobs Dashboard](screenshot/find_job.png)
 
@@ -30,7 +30,7 @@ Explore the primary capabilities of the application through the dedicated tabs:
 
 ---
 
-### 2. 🏢 Company Watchlist — Target Employer Monitoring
+### 2. Company Watchlist — Target Employer Monitoring
 > Track tier-1 tech companies, multinational enterprises, and high-growth startups with custom notes and live opening counters.
 ![Company Watchlist](screenshot/company_watchlist.png)
 
@@ -40,7 +40,7 @@ Explore the primary capabilities of the application through the dedicated tabs:
 
 ---
 
-### 3. 📌 Application Tracker — Full Lifecycle Kanban & Table
+### 3. Application Tracker — Full Lifecycle Kanban & Table
 > Manage your active job search pipeline with end-to-end status tracking, stage transitions, recruiter notes, and automated timestamp auditing.
 ![Application Tracker](screenshot/application_tracker.png)
 
@@ -51,7 +51,7 @@ Explore the primary capabilities of the application through the dedicated tabs:
 
 ---
 
-### 4. 📊 Market Insights — Real-Time Hiring & Skill Analytics
+### 4. Market Insights — Real-Time Hiring & Skill Analytics
 > Embedded Matplotlib analytical suite delivering 6 synchronized charts computed asynchronously in the background for zero-latency UI interactions.
 ![Market Insights](screenshot/market_insight.png)
 
@@ -64,7 +64,7 @@ Explore the primary capabilities of the application through the dedicated tabs:
 
 ---
 
-### 5. 🤖 AI Career Assistant — 100% Private Local LLM
+### 5. AI Career Assistant — 100% Private Local LLM
 > Real-time integration with LM Studio running local open-weight models (Qwen 2.5/3, Llama 3, Mistral, Gemma 2, Phi). Zero external API calls, zero subscription fees, and complete data privacy.
 ![AI Career Assistant](screenshot/ai_career_assistant.png)
 
@@ -77,7 +77,7 @@ Explore the primary capabilities of the application through the dedicated tabs:
 
 ---
 
-### 6. ⚙️ Sources & Backups — Health Diagnostics & Retention Engine
+### 6. Sources & Backups — Health Diagnostics & Retention Engine
 > Operational center for monitoring scraper health, executing automated database purges, and backing up local SQLite records.
 ![Sources & Backups](screenshot/source_backup.png)
 
@@ -88,7 +88,7 @@ Explore the primary capabilities of the application through the dedicated tabs:
 
 ---
 
-## ⚡ Quick Start Options
+## Quick Start Options
 
 ### Option 1: Standalone Windows Executable (No Python Required)
 Run the application directly without installing Python, Git, or dependencies:
@@ -124,7 +124,7 @@ python app.py
 
 ---
 
-## 📦 Pinned Dependencies & Environments
+## Pinned Dependencies & Environments
 
 All production and development dependencies are strictly pinned to ensure reproducible builds across Windows and Linux:
 
@@ -160,7 +160,7 @@ pip install -r requirements-dev.txt
 
 ---
 
-## 🏢 ATS Platform & Employer Coverage Matrix
+## ATS Platform & Employer Coverage Matrix
 
 The database is pre-populated with active listings harvested directly from native API endpoints:
 
@@ -174,7 +174,7 @@ The database is pre-populated with active listings harvested directly from nativ
 
 ---
 
-## 🧹 Database Architecture & Retention Engine
+## Database Architecture & Retention Engine
 
 The SQLite storage layer ([`src/database.py`](src/database.py)) is engineered for reliability, zero corruption, and minimal disk footprint:
 
@@ -187,7 +187,7 @@ The SQLite storage layer ([`src/database.py`](src/database.py)) is engineered fo
 
 ---
 
-## 🩺 Scraper Health Diagnostics & Monitoring
+## Scraper Health Diagnostics & Monitoring
 
 When career portals modify endpoints or alter JSON schemas, scrapers can fail silently. The built-in **Source Health Diagnostic Engine** proactively audits all endpoints:
 
@@ -211,7 +211,7 @@ python -m src.source_health --all --markdown
 
 ---
 
-## 🧪 Comprehensive Unit Test Suite
+## Comprehensive Unit Test Suite
 
 The test suite covers TF-IDF ranking, skill extraction, resume parsers, heuristic classifiers, source health diagnostics, and database retention routines with 100% passing tests:
 
@@ -238,7 +238,7 @@ pytest tests/ -v
 
 ---
 
-## ⚙️ GitHub Actions CI Pipeline
+## GitHub Actions CI Pipeline
 
 Continuous Integration is automated via [`.github/workflows/ci.yml`](.github/workflows/ci.yml):
 - **Cross-Platform Matrix**: Runs on both `ubuntu-latest` and `windows-latest`.
@@ -250,7 +250,7 @@ Continuous Integration is automated via [`.github/workflows/ci.yml`](.github/wor
 
 ---
 
-## 🔨 Building the Standalone Executable (.exe)
+## Building the Standalone Executable (.exe)
 
 To compile the standalone Windows portable distribution locally:
 ```powershell
@@ -262,7 +262,7 @@ This produces:
 
 ---
 
-## 📁 Repository Layout
+## Repository Layout
 
 ```text
 Job_finder/
@@ -307,6 +307,6 @@ Job_finder/
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
