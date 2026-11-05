@@ -30,6 +30,10 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Build Executable & Package ZIP
+        env:
+          PYTHONIOENCODING: "utf-8"
+          PYTHONUTF8: "1"
+          PYTHONPATH: "."
         run: |
           python build_exe.py
 
