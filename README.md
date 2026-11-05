@@ -1,5 +1,7 @@
 # 🧭 Local AI Job Finder — Desktop Edition
 
+[![Download Windows Portable](https://img.shields.io/badge/Download-Windows%20Portable%20(.exe)-0078d4?style=for-the-badge&logo=windows)](https://github.com/ASWINa1636/Job_finder/releases/latest)
+
 [![CI — Test & Build Validation](https://github.com/ASWINa1636/Job_finder/actions/workflows/ci.yml/badge.svg)](https://github.com/ASWINa1636/Job_finder/actions)
 ![Python 3.11+](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)
 ![Platform Windows](https://img.shields.io/badge/Platform-Windows%2011%20%7C%2010-0078d4)
@@ -90,7 +92,7 @@ Explore the primary capabilities of the application through the dedicated tabs:
 
 ### Option 1: Standalone Windows Executable (No Python Required)
 Run the application directly without installing Python, Git, or dependencies:
-1. Download **`LocalJobFinder-Windows-Portable.zip`** from the Releases page.
+1. Download **[LocalJobFinder-Windows-Portable.zip](https://github.com/ASWINa1636/Job_finder/releases/latest)** from the GitHub Releases page.
 2. Extract the ZIP archive to any folder.
 3. Double-click **`LocalJobFinder.exe`** (or `run.bat`).
 
