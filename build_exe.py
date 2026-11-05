@@ -51,13 +51,20 @@ def build():
     if (ROOT / "data" / "jobs.sqlite3").exists():
         add_data_args.append(f"--add-data={ROOT / 'data' / 'jobs.sqlite3'}{os.pathsep}data")
 
+    # Ensure setuptools / pkg_resources is available (required by altgraph on Python 3.12+)
+    try:
+        import pkg_resources
+    except ImportError:
+        print("[INIT] Installing setuptools for pkg_resources compatibility in Python 3.12+...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "setuptools"])
+
     # Verify PyInstaller is installed in the current Python environment
     try:
         import PyInstaller
         print(f"[OK] PyInstaller detected: version {PyInstaller.__version__}")
     except ImportError:
         print("[WARN] PyInstaller not imported in current runtime. Installing directly...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "pyinstaller==6.11.0", "pyinstaller-hooks-contrib"])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "setuptools", "pyinstaller==6.11.0", "pyinstaller-hooks-contrib"])
 
     pyinstaller_cmd = [
         sys.executable, "-m", "PyInstaller",
