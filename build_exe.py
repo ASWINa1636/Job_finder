@@ -64,7 +64,7 @@ def build():
         print(f"[OK] PyInstaller detected: version {PyInstaller.__version__}")
     except ImportError:
         print("[WARN] PyInstaller not imported in current runtime. Installing directly...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "setuptools", "pyinstaller==6.11.0", "pyinstaller-hooks-contrib"])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "setuptools<72.0.0", "pyinstaller>=6.11.0", "pyinstaller-hooks-contrib"])
 
     pyinstaller_cmd = [
         sys.executable, "-m", "PyInstaller",
