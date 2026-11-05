@@ -30,7 +30,7 @@ from tkinter import ttk, messagebox, filedialog
 
 import matplotlib
 matplotlib.use("TkAgg")
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from src.database import (
@@ -1133,52 +1133,28 @@ class LocalJobFinderApp:
         ins_prog.pack(pady=(0, 10))
         ins_prog.start(12)
 
-        def background_render():
+        def background_compute():
             try:
                 df = pd.DataFrame(jobs)
-                fig, axes = plt.subplots(3, 2, figsize=(10, 13), dpi=92)
-                fig.patch.set_facecolor("#ffffff")
-                plt.subplots_adjust(hspace=0.45, wspace=0.3, left=0.1, right=0.95, top=0.96, bottom=0.05)
 
                 # 1. Top Employers
-                ax1 = axes[0, 0]
                 comp_counts = df["company"].value_counts().head(12)
-                comp_counts.plot(kind="barh", ax=ax1, color="#2563eb")
-                ax1.set_title("Top Employers", fontsize=10, fontweight="bold")
-                ax1.invert_yaxis()
-                ax1.grid(axis="x", linestyle="--", alpha=0.5)
 
                 # 2. Opportunity Pipeline (Active vs Missed)
-                ax2 = axes[0, 1]
                 active_cnt = sum(1 for j in jobs if not is_outdated_job(j))
                 missed_cnt = sum(1 for j in jobs if is_missed_job(j))
                 applied_cnt = sum(1 for j in jobs if j.get("status") in ["Applied", "Interview", "Offer"])
                 pipeline_s = pd.Series({"Active (<30d)": active_cnt, "Missed (>30d)": missed_cnt, "Applied": applied_cnt})
-                pipeline_s.plot(kind="bar", ax=ax2, color=["#16a34a", "#d97706", "#2563eb"])
-                ax2.set_title("Active vs. Missed Opportunities", fontsize=10, fontweight="bold")
-                ax2.tick_params(axis="x", rotation=20)
-                ax2.grid(axis="y", linestyle="--", alpha=0.5)
 
                 # 3. Roles Specialization Distribution (sample for speed)
-                ax3 = axes[1, 0]
                 role_sample = jobs[:2500] if len(jobs) > 2500 else jobs
                 role_counts = pd.Series([inferred_role(j) for j in role_sample]).value_counts().head(10)
-                role_counts.plot(kind="barh", ax=ax3, color="#7c3aed")
-                ax3.set_title("Roles / Specializations", fontsize=10, fontweight="bold")
-                ax3.invert_yaxis()
-                ax3.grid(axis="x", linestyle="--", alpha=0.5)
 
                 # 4. Location / City
-                ax4 = axes[1, 1]
                 city_sample = jobs[:2500] if len(jobs) > 2500 else jobs
                 city_counts = pd.Series([city_of(j) for j in city_sample]).value_counts().head(10)
-                city_counts.plot(kind="bar", ax=ax4, color="#16a34a")
-                ax4.set_title("Top Locations / Cities", fontsize=10, fontweight="bold")
-                ax4.tick_params(axis="x", rotation=30)
-                ax4.grid(axis="y", linestyle="--", alpha=0.5)
 
                 # 5. Technical Skills (Analyzes representative sample of newest 350 jobs for instantaneous response)
-                ax5 = axes[2, 0]
                 skill_sample = jobs[:350] if len(jobs) > 350 else jobs
                 skill_counts = {}
                 for j in skill_sample:
@@ -1186,37 +1162,89 @@ class LocalJobFinderApp:
                     for sk in extract_skills(text):
                         skill_counts[sk] = skill_counts.get(sk, 0) + 1
 
-                if skill_counts:
-                    top_skills = pd.Series(skill_counts).sort_values(ascending=False).head(15)
-                    top_skills.plot(kind="barh", ax=ax5, color="#d97706")
-                    ax5.set_title("Most In-Demand Skills", fontsize=10, fontweight="bold")
-                    ax5.invert_yaxis()
-                    ax5.grid(axis="x", linestyle="--", alpha=0.5)
-                else:
-                    ax5.text(0.5, 0.5, "No skills extracted", ha="center", va="center")
+                top_skills = pd.Series(skill_counts).sort_values(ascending=False).head(15) if skill_counts else pd.Series(dtype=int)
 
                 # 6. Platform & ATS Sources
-                ax6 = axes[2, 1]
                 plat_counts = pd.Series([inferred_platform(j) for j in jobs]).value_counts()
-                plat_counts.plot(kind="bar", ax=ax6, color="#0891b2")
-                ax6.set_title("Jobs by Platform & ATS Source", fontsize=10, fontweight="bold")
-                ax6.tick_params(axis="x", rotation=25)
-                ax6.grid(axis="y", linestyle="--", alpha=0.5)
+
+                metrics = {
+                    "comp_counts": comp_counts,
+                    "pipeline_s": pipeline_s,
+                    "role_counts": role_counts,
+                    "city_counts": city_counts,
+                    "top_skills": top_skills,
+                    "plat_counts": plat_counts
+                }
 
                 if self.root.winfo_exists():
-                    self.root.after(0, lambda: self._on_insights_ready(fig))
+                    self.root.after(0, lambda: self._on_insights_ready(metrics))
             except Exception as e:
                 if self.root.winfo_exists():
                     self.root.after(0, lambda: self._on_insights_error(str(e)))
 
-        threading.Thread(target=background_render, daemon=True).start()
+        threading.Thread(target=background_compute, daemon=True).start()
 
-    def _on_insights_ready(self, fig):
+    def _on_insights_ready(self, m):
         self._insights_computing = False
         self._insights_rendered = True
 
         for widget in self.ins_scroll_frame.winfo_children():
             widget.destroy()
+
+        # Build Matplotlib figure safely on the main UI thread with pure Figure (no plt global state)
+        fig = Figure(figsize=(10, 13), dpi=92)
+        fig.patch.set_facecolor("#ffffff")
+        fig.subplots_adjust(hspace=0.45, wspace=0.3, left=0.1, right=0.95, top=0.96, bottom=0.05)
+        axes = fig.subplots(3, 2)
+
+        # 1. Top Employers
+        ax1 = axes[0, 0]
+        if not m["comp_counts"].empty:
+            m["comp_counts"].plot(kind="barh", ax=ax1, color="#2563eb")
+            ax1.set_title("Top Employers", fontsize=10, fontweight="bold")
+            ax1.invert_yaxis()
+            ax1.grid(axis="x", linestyle="--", alpha=0.5)
+
+        # 2. Opportunity Pipeline
+        ax2 = axes[0, 1]
+        m["pipeline_s"].plot(kind="bar", ax=ax2, color=["#16a34a", "#d97706", "#2563eb"])
+        ax2.set_title("Active vs. Missed Opportunities", fontsize=10, fontweight="bold")
+        ax2.tick_params(axis="x", rotation=20)
+        ax2.grid(axis="y", linestyle="--", alpha=0.5)
+
+        # 3. Roles Specialization
+        ax3 = axes[1, 0]
+        if not m["role_counts"].empty:
+            m["role_counts"].plot(kind="barh", ax=ax3, color="#7c3aed")
+            ax3.set_title("Roles / Specializations", fontsize=10, fontweight="bold")
+            ax3.invert_yaxis()
+            ax3.grid(axis="x", linestyle="--", alpha=0.5)
+
+        # 4. Location / City
+        ax4 = axes[1, 1]
+        if not m["city_counts"].empty:
+            m["city_counts"].plot(kind="bar", ax=ax4, color="#16a34a")
+            ax4.set_title("Top Locations / Cities", fontsize=10, fontweight="bold")
+            ax4.tick_params(axis="x", rotation=30)
+            ax4.grid(axis="y", linestyle="--", alpha=0.5)
+
+        # 5. In-Demand Skills
+        ax5 = axes[2, 0]
+        if not m["top_skills"].empty:
+            m["top_skills"].plot(kind="barh", ax=ax5, color="#d97706")
+            ax5.set_title("Most In-Demand Skills", fontsize=10, fontweight="bold")
+            ax5.invert_yaxis()
+            ax5.grid(axis="x", linestyle="--", alpha=0.5)
+        else:
+            ax5.text(0.5, 0.5, "No skills extracted", ha="center", va="center")
+
+        # 6. Platform & ATS Sources
+        ax6 = axes[2, 1]
+        if not m["plat_counts"].empty:
+            m["plat_counts"].plot(kind="bar", ax=ax6, color="#0891b2")
+            ax6.set_title("Jobs by Platform & ATS Source", fontsize=10, fontweight="bold")
+            ax6.tick_params(axis="x", rotation=25)
+            ax6.grid(axis="y", linestyle="--", alpha=0.5)
 
         self.fig_canvas = FigureCanvasTkAgg(fig, master=self.ins_scroll_frame)
         self.fig_canvas.draw()
