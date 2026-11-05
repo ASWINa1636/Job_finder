@@ -1,4 +1,4 @@
-# 🧭 Local AI Job Finder — Desktop Edition
+# 🧭 Job Finder — Desktop Edition
 
 [![Download Windows Portable](https://img.shields.io/badge/Download-Windows%20Portable%20(.exe)-0078d4?style=for-the-badge&logo=windows)](https://github.com/ASWINa1636/Job_finder/releases/latest)
 
